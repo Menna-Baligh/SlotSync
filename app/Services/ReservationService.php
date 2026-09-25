@@ -182,4 +182,82 @@ class ReservationService
             return $reservation;
         });
     }
+
+    public function updateReservation(int $reservationId, array $data): Reservation
+    {
+        return DB::transaction(function () use ($reservationId, $data) {
+
+            $reservation = Reservation::query()->find($reservationId);
+
+            if (! $reservation) {
+                throw new RuntimeException('Reservation not found.', 404);
+            }
+
+            if (in_array($reservation->status, [ReservationStatus::CANCELLED, ReservationStatus::EXPIRED], true)) {
+                throw new RuntimeException(
+                    "Cannot update reservation with status '{$reservation->status->value}'.",
+                    422
+                );
+            }
+
+            if ($reservation->status === ReservationStatus::PENDING && $reservation->expires_at && Carbon::now()->greaterThan($reservation->expires_at)) {
+                $reservation->update([
+                    'status'     => ReservationStatus::EXPIRED,
+                    'expires_at' => null,
+                ]);
+
+                throw new RuntimeException('Reservation has expired and cannot be updated.', 422);
+            }
+
+            $resource = Resource::query()
+                ->where('id', $reservation->resource_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $newStartTime = Carbon::parse($data['start_time']);
+            $newEndTime = Carbon::parse($data['end_time']);
+            $newUnits = (int) $data['units'];
+
+            $canBook = $this->availabilityService->canBook(
+                $resource,
+                $newStartTime,
+                $newEndTime,
+                $newUnits,
+                $reservation->id
+            );
+
+            if (! $canBook) {
+                throw new RuntimeException('Insufficient capacity available for the updated time interval.', 422);
+            }
+
+            $oldPayload = [
+                'units'      => $reservation->units,
+                'start_time' => $reservation->start_time,
+                'end_time'   => $reservation->end_time,
+                'status'     => $reservation->status->value,
+            ];
+
+            $reservation->update([
+                'units'      => $newUnits,
+                'start_time' => $newStartTime,
+                'end_time'   => $newEndTime,
+            ]);
+
+            $newPayload = [
+                'units'      => $reservation->units,
+                'start_time' => $reservation->start_time,
+                'end_time'   => $reservation->end_time,
+                'status'     => $reservation->status->value,
+            ];
+
+            ReservationHistory::create([
+                'reservation_id' => $reservation->id,
+                'action'         => 'UPDATED',
+                'old_payload'    => $oldPayload,
+                'new_payload'    => $newPayload,
+            ]);
+
+            return $reservation;
+        });
+    }
 }

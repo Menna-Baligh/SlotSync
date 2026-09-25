@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRequest;
+use App\Http\Requests\UpdateReservationRequest;
 use App\Http\Resources\ReservationResource;
 use App\Services\ReservationService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 class ReservationController extends Controller
 {
@@ -66,6 +67,28 @@ class ReservationController extends Controller
             return $this->successResponse(
                 data: new ReservationResource($reservation),
                 message: 'Reservation cancelled successfully.',
+                statusCode: Response::HTTP_OK
+            );
+
+        } catch (RuntimeException $e) {
+            $statusCode = $e->getCode() >= 400 && $e->getCode() < 600
+                ? $e->getCode()
+                : Response::HTTP_UNPROCESSABLE_ENTITY;
+
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                statusCode: $statusCode
+            );
+        }
+    }
+    public function update(UpdateReservationRequest $request, int $id): JsonResponse
+    {
+        try {
+            $reservation = $this->reservationService->updateReservation($id, $request->validated());
+
+            return $this->successResponse(
+                data: new ReservationResource($reservation),
+                message: 'Reservation updated successfully.',
                 statusCode: Response::HTTP_OK
             );
 
