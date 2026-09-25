@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ReservationStatus;
+use App\Models\ReservationHistory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,7 +28,7 @@ class Reservation extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'expires_at' => 'datetime',
-        'status' => ReservationStatus::class, 
+        'status' => ReservationStatus::class,
     ];
 
     public function resource(): BelongsTo
