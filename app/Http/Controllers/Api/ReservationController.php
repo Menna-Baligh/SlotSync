@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReservationRequest;
 use App\Http\Requests\UpdateReservationRequest;
+use App\Http\Resources\ReservationHistoryResource;
 use App\Http\Resources\ReservationResource;
+use App\Models\Reservation;
 use App\Services\ReservationService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -102,5 +104,16 @@ class ReservationController extends Controller
                 statusCode: $statusCode
             );
         }
+    }
+    public function history(int $id): JsonResponse
+    {
+        $reservation = Reservation::with('histories')->find($id);
+        if (! $reservation) {
+            return $this->errorResponse('Reservation not found.', Response::HTTP_NOT_FOUND);
+        }
+        return $this->successResponse(
+            data: ReservationHistoryResource::collection($reservation->histories),
+            message: 'Reservation history retrieved successfully.'
+        );
     }
 }
