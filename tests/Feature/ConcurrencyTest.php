@@ -5,6 +5,7 @@ use App\Services\ReservationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 uses(RefreshDatabase::class);
@@ -14,16 +15,16 @@ test('prevents overbooking when two simultaneous requests race for remaining cap
 
     $payloadA = [
         'resource_id' => $resource->id,
-        'units'       => 6,
-        'start_time'  => '2026-10-01 10:00:00',
-        'end_time'    => '2026-10-01 11:00:00',
+        'units' => 6,
+        'start_time' => '2026-10-01 10:00:00',
+        'end_time' => '2026-10-01 11:00:00',
     ];
 
     $payloadB = [
         'resource_id' => $resource->id,
-        'units'       => 6,
-        'start_time'  => '2026-10-01 10:00:00',
-        'end_time'    => '2026-10-01 11:00:00',
+        'units' => 6,
+        'start_time' => '2026-10-01 10:00:00',
+        'end_time' => '2026-10-01 11:00:00',
     ];
 
     $service = app(ReservationService::class);
@@ -35,7 +36,7 @@ test('prevents overbooking when two simultaneous requests race for remaining cap
         try {
             $service->createReservation($payload);
             $successCount++;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $failureCount++;
         }
     }

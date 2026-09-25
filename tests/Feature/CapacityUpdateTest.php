@@ -23,10 +23,10 @@ test('rejects capacity reduction below current active booked peak', function () 
 
     Reservation::create([
         'resource_id' => $resource->id,
-        'units'       => 7,
-        'start_time'  => now()->addHour(),
-        'end_time'    => now()->addHours(2),
-        'status'      => ReservationStatus::CONFIRMED,
+        'units' => 7,
+        'start_time' => now()->addHour(),
+        'end_time' => now()->addHours(2),
+        'status' => ReservationStatus::CONFIRMED,
     ]);
 
     $response = $this->patchJson("/api/resources/{$resource->id}/capacity", ['capacity' => 5]);

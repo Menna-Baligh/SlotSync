@@ -3,6 +3,7 @@
 use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
@@ -13,9 +14,9 @@ test('returns identical response and creates only one reservation for duplicate 
     $key = 'UNIQUE-KEY-12345';
     $payload = [
         'resource_id' => $this->resource->id,
-        'units'       => 3,
-        'start_time'  => '2026-10-01 10:00:00',
-        'end_time'    => '2026-10-01 11:00:00',
+        'units' => 3,
+        'start_time' => '2026-10-01 10:00:00',
+        'end_time' => '2026-10-01 11:00:00',
     ];
 
     $res1 = $this->withHeader('Idempotency-Key', $key)->postJson('/api/reservations', $payload);
@@ -35,16 +36,16 @@ test('rejects request when same idempotency key is reused with different payload
 
     $payloadOriginal = [
         'resource_id' => $this->resource->id,
-        'units'       => 3,
-        'start_time'  => '2026-10-01 10:00:00',
-        'end_time'    => '2026-10-01 11:00:00',
+        'units' => 3,
+        'start_time' => '2026-10-01 10:00:00',
+        'end_time' => '2026-10-01 11:00:00',
     ];
 
     $payloadModified = [
         'resource_id' => $this->resource->id,
-        'units'       => 5, 
-        'start_time'  => '2026-10-01 10:00:00',
-        'end_time'    => '2026-10-01 11:00:00',
+        'units' => 5,
+        'start_time' => '2026-10-01 10:00:00',
+        'end_time' => '2026-10-01 11:00:00',
     ];
 
     $this->withHeader('Idempotency-Key', $key)->postJson('/api/reservations', $payloadOriginal)->assertCreated();
