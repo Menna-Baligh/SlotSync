@@ -58,4 +58,26 @@ class ReservationController extends Controller
             );
         }
     }
+    public function cancel(int $id): JsonResponse
+    {
+        try {
+            $reservation = $this->reservationService->cancelReservation($id);
+
+            return $this->successResponse(
+                data: new ReservationResource($reservation),
+                message: 'Reservation cancelled successfully.',
+                statusCode: Response::HTTP_OK
+            );
+
+        } catch (RuntimeException $e) {
+            $statusCode = $e->getCode() >= 400 && $e->getCode() < 600
+                ? $e->getCode()
+                : Response::HTTP_UNPROCESSABLE_ENTITY;
+
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                statusCode: $statusCode
+            );
+        }
+    }
 }

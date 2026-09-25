@@ -136,4 +136,50 @@ class ReservationService
             return $reservation;
         });
     }
+
+    public function cancelReservation(int $reservationId): Reservation
+    {
+        return DB::transaction(function () use ($reservationId) {
+
+            $reservation = Reservation::query()
+                ->where('id', $reservationId)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $reservation) {
+                throw new RuntimeException('Reservation not found.', 404);
+            }
+
+            if (in_array($reservation->status, [ReservationStatus::CANCELLED, ReservationStatus::EXPIRED], true)) {
+                throw new RuntimeException(
+                    "Cannot cancel reservation with status '{$reservation->status->value}'.",
+                    422
+                );
+            }
+
+            $oldPayload = [
+                'status'     => $reservation->status->value,
+                'expires_at' => $reservation->expires_at ? $reservation->expires_at : null,
+            ];
+
+            $reservation->update([
+                'status'     => ReservationStatus::CANCELLED,
+                'expires_at' => null,
+            ]);
+
+            $newPayload = [
+                'status'     => $reservation->status->value,
+                'expires_at' => null,
+            ];
+
+            ReservationHistory::create([
+                'reservation_id' => $reservation->id,
+                'action'         => 'CANCELLED',
+                'old_payload'    => $oldPayload,
+                'new_payload'    => $newPayload,
+            ]);
+
+            return $reservation;
+        });
+    }
 }
