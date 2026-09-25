@@ -43,6 +43,6 @@ test('prevents overbooking when two simultaneous requests race for remaining cap
     expect($successCount)->toBe(1)
         ->and($failureCount)->toBe(1);
 
-    $totalUnitsInDb = DB::table('reservations')->where('resource_id', $resource->id)->sum('units');
+    $totalUnitsInDb = (int) DB::table('reservations')->where('resource_id', $resource->id)->sum('units');
     expect($totalUnitsInDb)->toBe(6);
 });
