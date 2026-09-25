@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ReservationController extends Controller
 {
     use ApiResponse;
+
     public function __construct(
         protected ReservationService $reservationService
     ) {}
@@ -39,6 +40,7 @@ class ReservationController extends Controller
             );
         }
     }
+
     public function confirm(int $id): JsonResponse
     {
         try {
@@ -61,6 +63,7 @@ class ReservationController extends Controller
             );
         }
     }
+
     public function cancel(int $id): JsonResponse
     {
         try {
@@ -83,6 +86,7 @@ class ReservationController extends Controller
             );
         }
     }
+
     public function update(UpdateReservationRequest $request, int $id): JsonResponse
     {
         try {
@@ -105,12 +109,14 @@ class ReservationController extends Controller
             );
         }
     }
+
     public function history(int $id): JsonResponse
     {
         $reservation = Reservation::with('histories')->find($id);
         if (! $reservation) {
             return $this->errorResponse('Reservation not found.', Response::HTTP_NOT_FOUND);
         }
+
         return $this->successResponse(
             data: ReservationHistoryResource::collection($reservation->histories),
             message: 'Reservation history retrieved successfully.'

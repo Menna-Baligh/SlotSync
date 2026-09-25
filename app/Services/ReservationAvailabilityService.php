@@ -11,8 +11,7 @@ use Illuminate\Support\Carbon;
 
 class ReservationAvailabilityService
 {
-
-    public function calculateAvailability(Resource $resource,CarbonInterface $startTime,CarbonInterface $endTime,?int $ignoreReservationId = null): array
+    public function calculateAvailability(Resource $resource, CarbonInterface $startTime, CarbonInterface $endTime, ?int $ignoreReservationId = null): array
     {
         $activeReservations = $this->getRelevantReservations(
             $resource->id,
@@ -30,15 +29,14 @@ class ReservationAvailabilityService
         $availableUnits = max(0, $resource->capacity - $maxReservedUnits);
 
         return [
-            'resource_id'        => $resource->id,
-            'capacity'           => $resource->capacity,
+            'resource_id' => $resource->id,
+            'capacity' => $resource->capacity,
             'max_reserved_units' => $maxReservedUnits,
-            'available_units'    => $availableUnits,
+            'available_units' => $availableUnits,
         ];
     }
 
-
-    public function canBook(Resource $resource,CarbonInterface $startTime,CarbonInterface $endTime,int $requestedUnits,?int $ignoreReservationId = null): bool
+    public function canBook(Resource $resource, CarbonInterface $startTime, CarbonInterface $endTime, int $requestedUnits, ?int $ignoreReservationId = null): bool
     {
         if ($requestedUnits <= 0) {
             return false;
@@ -54,7 +52,7 @@ class ReservationAvailabilityService
         return $availability['available_units'] >= $requestedUnits;
     }
 
-    protected function getRelevantReservations(int $resourceId,CarbonInterface $startTime,CarbonInterface $endTime,?int $ignoreReservationId = null): Collection
+    protected function getRelevantReservations(int $resourceId, CarbonInterface $startTime, CarbonInterface $endTime, ?int $ignoreReservationId = null): Collection
     {
         $now = Carbon::now();
 
@@ -73,7 +71,7 @@ class ReservationAvailabilityService
             ->get();
     }
 
-    public function calculateMaxConcurrentUnits(Collection $reservations,CarbonInterface $rangeStart,CarbonInterface $rangeEnd): int
+    public function calculateMaxConcurrentUnits(Collection $reservations, CarbonInterface $rangeStart, CarbonInterface $rangeEnd): int
     {
         $events = [];
 
@@ -88,14 +86,14 @@ class ReservationAvailabilityService
 
             if ($eventStart->lessThan($eventEnd)) {
                 $events[] = [
-                    'time'  => $eventStart->timestamp,
-                    'type'  => 1,
+                    'time' => $eventStart->timestamp,
+                    'type' => 1,
                     'units' => $reservation->units,
                 ];
 
                 $events[] = [
-                    'time'  => $eventEnd->timestamp,
-                    'type'  => -1,
+                    'time' => $eventEnd->timestamp,
+                    'type' => -1,
                     'units' => -$reservation->units,
                 ];
             }
@@ -103,8 +101,9 @@ class ReservationAvailabilityService
 
         usort($events, function ($a, $b) {
             if ($a['time'] === $b['time']) {
-                return $a['type'] <=> $b['type']; 
+                return $a['type'] <=> $b['type'];
             }
+
             return $a['time'] <=> $b['time'];
         });
 

@@ -12,8 +12,8 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('resource_id')
-                    ->constrained('resources')
-                    ->onDelete('restrict');
+                ->constrained('resources')
+                ->onDelete('restrict');
 
             $table->unsignedInteger('units');
             $table->dateTime('start_time');

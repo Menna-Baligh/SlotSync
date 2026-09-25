@@ -7,17 +7,16 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponse
 {
-
-    public function successResponse( mixed $data = null,string $message = 'Operation completed successfully.',int $statusCode = Response::HTTP_OK): JsonResponse
+    public function successResponse(mixed $data = null, string $message = 'Operation completed successfully.', int $statusCode = Response::HTTP_OK): JsonResponse
     {
         return response()->json([
             'success' => true,
             'message' => $message,
-            'data'    => $data,
+            'data' => $data,
         ], $statusCode);
     }
 
-    public function errorResponse(string $message = 'An error occurred.',int $statusCode = Response::HTTP_BAD_REQUEST,mixed $errors = null): JsonResponse
+    public function errorResponse(string $message = 'An error occurred.', int $statusCode = Response::HTTP_BAD_REQUEST, mixed $errors = null): JsonResponse
     {
         $response = [
             'success' => false,

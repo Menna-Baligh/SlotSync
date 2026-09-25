@@ -20,21 +20,21 @@ class UpdateReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'units'      => ['required', 'integer', 'min:1'],
+            'units' => ['required', 'integer', 'min:1'],
             'start_time' => ['required', 'date', 'after_or_equal:now'],
-            'end_time'   => ['required', 'date', 'after:start_time'],
+            'end_time' => ['required', 'date', 'after:start_time'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'units.required'            => 'The units field is required.',
-            'units.min'                 => 'Units must be at least 1.',
-            'start_time.required'       => 'The start time is required.',
+            'units.required' => 'The units field is required.',
+            'units.min' => 'Units must be at least 1.',
+            'start_time.required' => 'The start time is required.',
             'start_time.after_or_equal' => 'Start time cannot be in the past.',
-            'end_time.required'         => 'The end time is required.',
-            'end_time.after'            => 'End time must be strictly after the start time.',
+            'end_time.required' => 'The end time is required.',
+            'end_time.after' => 'End time must be strictly after the start time.',
         ];
     }
 

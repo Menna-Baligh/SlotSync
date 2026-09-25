@@ -7,8 +7,8 @@ use App\Http\Requests\UpdateResourceCapacityRequest;
 use App\Services\ResourceService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\Response;
 
 class ResourceController extends Controller
 {
@@ -25,8 +25,8 @@ class ResourceController extends Controller
 
             return $this->successResponse(
                 data: [
-                    'id'       => $resource->id,
-                    'name'     => $resource->name,
+                    'id' => $resource->id,
+                    'name' => $resource->name,
                     'capacity' => $resource->capacity,
                 ],
                 message: 'Resource capacity updated successfully.',

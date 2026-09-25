@@ -16,7 +16,6 @@ class ReservationService
         protected ReservationAvailabilityService $availabilityService
     ) {}
 
-
     public function createReservation(array $data): Reservation
     {
         return DB::transaction(function () use ($data) {
@@ -45,22 +44,22 @@ class ReservationService
 
             $reservation = Reservation::create([
                 'resource_id' => $resource->id,
-                'units'       => $requestedUnits,
-                'start_time'  => $startTime,
-                'end_time'    => $endTime,
-                'status'      => ReservationStatus::PENDING,
-                'expires_at'  => $expiresAt,
+                'units' => $requestedUnits,
+                'start_time' => $startTime,
+                'end_time' => $endTime,
+                'status' => ReservationStatus::PENDING,
+                'expires_at' => $expiresAt,
             ]);
 
             ReservationHistory::create([
                 'reservation_id' => $reservation->id,
-                'action'         => 'CREATED',
-                'old_payload'    => null,
-                'new_payload'    => [
-                    'units'      => $reservation->units,
+                'action' => 'CREATED',
+                'old_payload' => null,
+                'new_payload' => [
+                    'units' => $reservation->units,
                     'start_time' => $reservation->start_time,
-                    'end_time'   => $reservation->end_time,
-                    'status'     => $reservation->status->value,
+                    'end_time' => $reservation->end_time,
+                    'status' => $reservation->status->value,
                     'expires_at' => $reservation->expires_at,
                 ],
             ]);
@@ -92,45 +91,45 @@ class ReservationService
             if ($reservation->expires_at && Carbon::now()->greaterThan($reservation->expires_at)) {
 
                 $oldPayload = [
-                    'status'     => $reservation->status->value,
+                    'status' => $reservation->status->value,
                     'expires_at' => $reservation->expires_at,
                 ];
 
                 $reservation->update([
-                    'status'     => ReservationStatus::EXPIRED,
+                    'status' => ReservationStatus::EXPIRED,
                     'expires_at' => null,
                 ]);
 
                 ReservationHistory::create([
                     'reservation_id' => $reservation->id,
-                    'action'         => 'EXPIRED',
-                    'old_payload'    => $oldPayload,
-                    'new_payload'    => ['status' => ReservationStatus::EXPIRED->value],
+                    'action' => 'EXPIRED',
+                    'old_payload' => $oldPayload,
+                    'new_payload' => ['status' => ReservationStatus::EXPIRED->value],
                 ]);
 
                 throw new RuntimeException('Reservation has expired and cannot be confirmed.', 422);
             }
 
             $oldPayload = [
-                'status'     => $reservation->status->value,
+                'status' => $reservation->status->value,
                 'expires_at' => $reservation->expires_at ? $reservation->expires_at : null,
             ];
 
             $reservation->update([
-                'status'     => ReservationStatus::CONFIRMED,
+                'status' => ReservationStatus::CONFIRMED,
                 'expires_at' => null,
             ]);
 
             $newPayload = [
-                'status'     => $reservation->status->value,
+                'status' => $reservation->status->value,
                 'expires_at' => null,
             ];
 
             ReservationHistory::create([
                 'reservation_id' => $reservation->id,
-                'action'         => 'CONFIRMED',
-                'old_payload'    => $oldPayload,
-                'new_payload'    => $newPayload,
+                'action' => 'CONFIRMED',
+                'old_payload' => $oldPayload,
+                'new_payload' => $newPayload,
             ]);
 
             return $reservation;
@@ -158,25 +157,25 @@ class ReservationService
             }
 
             $oldPayload = [
-                'status'     => $reservation->status->value,
+                'status' => $reservation->status->value,
                 'expires_at' => $reservation->expires_at ? $reservation->expires_at : null,
             ];
 
             $reservation->update([
-                'status'     => ReservationStatus::CANCELLED,
+                'status' => ReservationStatus::CANCELLED,
                 'expires_at' => null,
             ]);
 
             $newPayload = [
-                'status'     => $reservation->status->value,
+                'status' => $reservation->status->value,
                 'expires_at' => null,
             ];
 
             ReservationHistory::create([
                 'reservation_id' => $reservation->id,
-                'action'         => 'CANCELLED',
-                'old_payload'    => $oldPayload,
-                'new_payload'    => $newPayload,
+                'action' => 'CANCELLED',
+                'old_payload' => $oldPayload,
+                'new_payload' => $newPayload,
             ]);
 
             return $reservation;
@@ -202,7 +201,7 @@ class ReservationService
 
             if ($reservation->status === ReservationStatus::PENDING && $reservation->expires_at && Carbon::now()->greaterThan($reservation->expires_at)) {
                 $reservation->update([
-                    'status'     => ReservationStatus::EXPIRED,
+                    'status' => ReservationStatus::EXPIRED,
                     'expires_at' => null,
                 ]);
 
@@ -231,30 +230,30 @@ class ReservationService
             }
 
             $oldPayload = [
-                'units'      => $reservation->units,
+                'units' => $reservation->units,
                 'start_time' => $reservation->start_time,
-                'end_time'   => $reservation->end_time,
-                'status'     => $reservation->status->value,
+                'end_time' => $reservation->end_time,
+                'status' => $reservation->status->value,
             ];
 
             $reservation->update([
-                'units'      => $newUnits,
+                'units' => $newUnits,
                 'start_time' => $newStartTime,
-                'end_time'   => $newEndTime,
+                'end_time' => $newEndTime,
             ]);
 
             $newPayload = [
-                'units'      => $reservation->units,
+                'units' => $reservation->units,
                 'start_time' => $reservation->start_time,
-                'end_time'   => $reservation->end_time,
-                'status'     => $reservation->status->value,
+                'end_time' => $reservation->end_time,
+                'status' => $reservation->status->value,
             ];
 
             ReservationHistory::create([
                 'reservation_id' => $reservation->id,
-                'action'         => 'UPDATED',
-                'old_payload'    => $oldPayload,
-                'new_payload'    => $newPayload,
+                'action' => 'UPDATED',
+                'old_payload' => $oldPayload,
+                'new_payload' => $newPayload,
             ]);
 
             return $reservation;

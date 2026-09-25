@@ -11,19 +11,19 @@ class ResourceSeeder extends Seeder
     {
         $resources = [
             [
-                'name'     => 'Main Conference Room',
+                'name' => 'Main Conference Room',
                 'capacity' => 10,
             ],
             [
-                'name'     => 'Small Meeting Room',
+                'name' => 'Small Meeting Room',
                 'capacity' => 4,
             ],
             [
-                'name'     => 'Training Hall',
+                'name' => 'Training Hall',
                 'capacity' => 25,
             ],
             [
-                'name'     => 'VIP Boardroom',
+                'name' => 'VIP Boardroom',
                 'capacity' => 6,
             ],
         ];

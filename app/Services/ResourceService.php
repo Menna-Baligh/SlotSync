@@ -15,7 +15,6 @@ class ResourceService
         protected ReservationAvailabilityService $availabilityService
     ) {}
 
-
     public function updateCapacity(int $resourceId, int $newCapacity): Resource
     {
         return DB::transaction(function () use ($resourceId, $newCapacity) {

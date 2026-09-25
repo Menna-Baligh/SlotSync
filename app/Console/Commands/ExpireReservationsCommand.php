@@ -12,9 +12,7 @@ use Throwable;
 
 class ExpireReservationsCommand extends Command
 {
-
     protected $signature = 'reservations:expire';
-
 
     protected $description = 'Find overdue pending reservations and mark them as expired.';
 
@@ -29,6 +27,7 @@ class ExpireReservationsCommand extends Command
 
         if ($expiredIds->isEmpty()) {
             $this->info('No overdue pending reservations found.');
+
             return Command::SUCCESS;
         }
 
@@ -45,27 +44,27 @@ class ExpireReservationsCommand extends Command
                     if ($reservation && $reservation->status === ReservationStatus::PENDING) {
 
                         $oldPayload = [
-                            'status'     => $reservation->status->value,
+                            'status' => $reservation->status->value,
                             'expires_at' => $reservation->expires_at ? $reservation->expires_at->toIso8601String() : null,
                         ];
 
                         $reservation->update([
-                            'status'     => ReservationStatus::EXPIRED,
+                            'status' => ReservationStatus::EXPIRED,
                             'expires_at' => null,
                         ]);
 
                         ReservationHistory::create([
                             'reservation_id' => $reservation->id,
-                            'action'         => 'EXPIRED',
-                            'old_payload'    => $oldPayload,
-                            'new_payload'    => ['status' => ReservationStatus::EXPIRED->value],
+                            'action' => 'EXPIRED',
+                            'old_payload' => $oldPayload,
+                            'new_payload' => ['status' => ReservationStatus::EXPIRED->value],
                         ]);
 
                         $count++;
                     }
                 });
             } catch (Throwable $e) {
-                $this->error("Failed to expire reservation #{$id}: " . $e->getMessage());
+                $this->error("Failed to expire reservation #{$id}: ".$e->getMessage());
             }
         }
 

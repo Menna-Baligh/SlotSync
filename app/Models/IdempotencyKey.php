@@ -19,6 +19,6 @@ class IdempotencyKey extends Model
 
     protected $casts = [
         'response_code' => 'integer',
-        'response_body' => 'array', 
+        'response_body' => 'array',
     ];
 }

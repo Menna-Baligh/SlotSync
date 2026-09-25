@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\ResourceController;
 use App\Http\Middleware\IdempotencyMiddleware;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware([IdempotencyMiddleware::class])->group(function () {
 
     Route::prefix('reservations')->name('reservations.')->group(function () {

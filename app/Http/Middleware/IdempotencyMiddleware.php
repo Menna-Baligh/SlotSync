@@ -25,7 +25,7 @@ class IdempotencyMiddleware
             return $next($request);
         }
 
-        $endpoint = $request->method() . ' ' . $request->path();
+        $endpoint = $request->method().' '.$request->path();
         $requestHash = hash('sha256', json_encode($request->all()));
 
         $existingKey = IdempotencyKey::query()
@@ -54,9 +54,9 @@ class IdempotencyMiddleware
                 $content = json_decode($response->getContent(), true);
 
                 IdempotencyKey::create([
-                    'key'           => $key,
-                    'endpoint'      => $endpoint,
-                    'request_hash'  => $requestHash,
+                    'key' => $key,
+                    'endpoint' => $endpoint,
+                    'request_hash' => $requestHash,
                     'response_code' => $response->getStatusCode(),
                     'response_body' => $content ?? [],
                 ]);

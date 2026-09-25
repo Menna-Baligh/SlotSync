@@ -28,8 +28,8 @@ class UpdateResourceCapacityRequest extends FormRequest
     {
         return [
             'capacity.required' => 'The capacity field is required.',
-            'capacity.integer'  => 'Capacity must be an integer.',
-            'capacity.min'      => 'Capacity must be at least 1.',
+            'capacity.integer' => 'Capacity must be an integer.',
+            'capacity.min' => 'Capacity must be at least 1.',
         ];
     }
 
