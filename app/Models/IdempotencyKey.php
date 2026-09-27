@@ -13,6 +13,7 @@ class IdempotencyKey extends Model
         'key',
         'endpoint',
         'request_hash',
+        'status',
         'response_code',
         'response_body',
     ];
