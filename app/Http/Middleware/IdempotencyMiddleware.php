@@ -25,16 +25,15 @@ class IdempotencyMiddleware
             return $next($request);
         }
 
-        $endpoint    = $request->method().' '.$request->path();
+        $endpoint = $request->method().' '.$request->path();
         $requestHash = hash('sha256', json_encode($request->all()));
-
 
         try {
             IdempotencyKey::create([
-                'key'          => $key,
-                'endpoint'     => $endpoint,
+                'key' => $key,
+                'endpoint' => $endpoint,
                 'request_hash' => $requestHash,
-                'status'       => 'processing',
+                'status' => 'processing',
                 'response_code' => null,
                 'response_body' => null,
             ]);
@@ -50,7 +49,7 @@ class IdempotencyMiddleware
             IdempotencyKey::where('key', $key)
                 ->where('endpoint', $endpoint)
                 ->update([
-                    'status'        => 'completed',
+                    'status' => 'completed',
                     'response_code' => $response->getStatusCode(),
                     'response_body' => json_encode($content ?? []),
                 ]);
@@ -63,7 +62,6 @@ class IdempotencyMiddleware
 
         return $response;
     }
-
 
     private function handleExistingKey(string $key, string $endpoint, string $requestHash): mixed
     {
